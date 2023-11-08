@@ -1,3 +1,3 @@
-module rest-api
+module github.com/koki120/go-rest-api
 
-go 1.19
+go 1.21
