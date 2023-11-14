@@ -9,7 +9,10 @@ import (
 
 func NewRouter() *http.ServeMux {
 	mux := http.NewServeMux()
-	h := middleware.NewHandleHTTPMethod(mux, []middleware.HandlerWrapper{})
+
+	h := middleware.NewHandleHTTPMethod(mux, []middleware.HandlerWrapper{
+		middleware.Authentication,
+	})
 
 	memoHandler := memo.NewHandler()
 

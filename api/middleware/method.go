@@ -2,66 +2,16 @@ package middleware
 
 import "net/http"
 
-type HandleHTTPMethod struct {
-	mux             *http.ServeMux
-	handlerWrappers []HandlerWrapper
-}
-
-type HandlerWrapper func(http.HandlerFunc) http.HandlerFunc
-
-func NewHandleHTTPMethod(mux *http.ServeMux, handlerWrappers []HandlerWrapper) *HandleHTTPMethod {
-	return &HandleHTTPMethod{
-		mux,
-		handlerWrappers,
-	}
-}
-
 const methodNotAllowed = "Method not allowed."
 
-func (h *HandleHTTPMethod) GET(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodGet, handler)
-}
-
-func (h *HandleHTTPMethod) POST(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodPost, handler)
-}
-
-func (h *HandleHTTPMethod) PUT(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodPut, handler)
-}
-
-func (h *HandleHTTPMethod) DELETE(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodDelete, handler)
-}
-
-func (h *HandleHTTPMethod) HEAD(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodHead, handler)
-}
-
-func (h *HandleHTTPMethod) OPTIONS(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodOptions, handler)
-}
-
-func (h *HandleHTTPMethod) PATCH(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodPatch, handler)
-}
-
-func (h *HandleHTTPMethod) TRACE(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodTrace, handler)
-}
-
-func (h *HandleHTTPMethod) CONNECT(url string, handler http.HandlerFunc) {
-	allowMethod(h, url, http.MethodConnect, handler)
-}
-
-func allowMethod(h *HandleHTTPMethod, url string, method string, f http.HandlerFunc) {
-	hw := applyWrappers(f, h.handlerWrappers...)
-
+// This function invokes middleware and allows a specific HTTP method.
+func allowMethod(h *HandleHTTPMethod, url string, method string, next http.HandlerFunc) {
 	h.mux.HandleFunc(
 		url,
 		func(w http.ResponseWriter, r *http.Request) {
+			hw := applyWrappers(next, h.handlerWrappers...)
 			if r.Method == method {
-				hw(w, r)
+				hw.ServeHTTP(w, r)
 				return
 			}
 			http.Error(w, methodNotAllowed, http.StatusMethodNotAllowed)
@@ -69,9 +19,9 @@ func allowMethod(h *HandleHTTPMethod, url string, method string, f http.HandlerF
 	)
 }
 
-func applyWrappers(handler http.HandlerFunc, wrappers ...HandlerWrapper) http.HandlerFunc {
+func applyWrappers(next http.HandlerFunc, wrappers ...HandlerWrapper) http.Handler {
 	for _, wrapper := range wrappers {
-		handler = wrapper(handler)
+		next = wrapper(next)
 	}
-	return handler
+	return next
 }
