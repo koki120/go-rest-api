@@ -1,22 +1,22 @@
-package handler
+package memo
 
 import (
 	"encoding/json"
 	"net/http"
 
+	i_memo "github.com/koki120/go-rest-api/interface/imemo"
 	"github.com/koki120/go-rest-api/log"
-	"github.com/koki120/go-rest-api/usecase/input_port"
 )
 
-type MemoHandler struct {
-	MemoUC input_port.IMemoUseCase
+type Handler struct {
+	MemoUC i_memo.IUseCase
 }
 
-func NewMemoHandler() *MemoHandler {
-	return &MemoHandler{}
+func NewHandler() *Handler {
+	return &Handler{}
 }
 
-func (h *MemoHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) FindByID(w http.ResponseWriter, r *http.Request) {
 	logger := log.NewLogger()
 
 	var memoID string

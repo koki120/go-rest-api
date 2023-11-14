@@ -9,3 +9,8 @@ type Memo struct {
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
 }
+
+type MemoCrate struct {
+	Title string
+	Body  string
+}

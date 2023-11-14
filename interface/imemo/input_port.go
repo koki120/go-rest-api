@@ -1,15 +1,10 @@
-package input_port
+package i_memo
 
 import "github.com/koki120/go-rest-api/domain/entity"
 
-type MemoCrate struct {
-	Title string
-	Body  string
-}
-
-type IMemoUseCase interface {
+type IUseCase interface {
 	FindByID(string) (entity.Memo, error)
-	Crate(MemoCrate) (entity.Memo, error)
+	Crate(entity.MemoCrate) (entity.Memo, error)
 	Update(entity.Memo) (entity.Memo, error)
 	Delete(string) (entity.Memo, error)
 }
