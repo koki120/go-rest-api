@@ -5,7 +5,7 @@ import "net/http"
 const methodNotAllowed = "Method not allowed."
 
 // This function invokes middleware and allows a specific HTTP method.
-func allowMethod(h *HandleHTTPMethod, url string, method string, next http.HandlerFunc) {
+func handleMethod(h *HandleHTTPMethod, url string, method string, next http.HandlerFunc) {
 	h.mux.HandleFunc(
 		url,
 		func(w http.ResponseWriter, r *http.Request) {
