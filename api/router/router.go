@@ -13,6 +13,7 @@ func NewRouter() *http.ServeMux {
 
 	h := middleware.NewHandleHTTPMethod(mux, []middleware.HandlerWrapper{
 		middleware.Authentication,
+		middleware.Recovery,
 	})
 
 	helloHandler := hello.NewHandler()

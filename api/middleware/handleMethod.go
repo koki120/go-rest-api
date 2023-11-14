@@ -20,8 +20,9 @@ func handleMethod(h *HandleHTTPMethod, url string, method string, next http.Hand
 }
 
 func applyWrappers(next http.HandlerFunc, wrappers ...HandlerWrapper) http.Handler {
-	for _, wrapper := range wrappers {
-		next = wrapper(next)
+	// To execute array elements (functions) in reverse order
+	for i := len(wrappers) - 1; i >= 0; i-- {
+		next = wrappers[i](next)
 	}
 	return next
 }
