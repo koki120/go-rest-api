@@ -11,9 +11,9 @@ import (
 func main() {
 	logger := log.NewLogger()
 
-	r := router.NewRouter()
+	s := router.NewServer()
 
-	if err := http.ListenAndServe(":80", r); err != nil {
+	if err := http.ListenAndServe(":80", s); err != nil {
 		logger.Error("Failed to start server", err)
 		os.Exit(1)
 	}

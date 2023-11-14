@@ -8,7 +8,7 @@ import (
 	"github.com/koki120/go-rest-api/features/memo"
 )
 
-func NewRouter() *http.ServeMux {
+func NewServer() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	h := middleware.NewHandleHTTPMethod(mux, []middleware.HandlerWrapper{
