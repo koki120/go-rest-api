@@ -1,6 +1,7 @@
 package memo
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/koki120/go-rest-api/interface/i_memo"
@@ -23,21 +24,20 @@ func (h *Handler) FindByID(w http.ResponseWriter, r *http.Request) {
 	pathParm := util.GetLastPathParameter(*r)
 	logger.Warn("FindByID not implement" + pathParm)
 
-	// var memoID string
-	// // TODO:bind query
+	memoID := util.GetLastPathParameter(*r)
 
-	// res, err := h.MemoUC.FindByID(memoID)
-	// if err != nil {
-	// 	logger.Error("Failed to find memo", err)
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	res, err := h.MemoUC.FindByID(memoID)
+	if err != nil {
+		logger.Error("Failed to find memo", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	// if err = json.NewEncoder(w).Encode(res); err != nil {
-	// 	logger.Error("Failed to encode response to JSON", err)
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	if err = json.NewEncoder(w).Encode(res); err != nil {
+		logger.Error("Failed to encode response to JSON", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
