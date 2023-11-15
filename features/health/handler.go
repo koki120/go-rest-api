@@ -3,6 +3,8 @@ package health
 import (
 	"database/sql"
 	"net/http"
+
+	"github.com/koki120/go-rest-api/util"
 )
 
 type Handler struct {
@@ -20,6 +22,5 @@ func (h *Handler) Health(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(http.StatusText(http.StatusOK)))
+	util.WriteStatusText(w, http.StatusOK)
 }

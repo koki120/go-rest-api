@@ -6,6 +6,6 @@ type IUseCase interface {
 	FindByID(string) (entity.User, error)
 	Crate(entity.UserCrate) (entity.User, error)
 	Update(entity.User) (entity.User, error)
-	Delete(string) (entity.User, error)
+	Delete(string) error
 	Search() ([]entity.User, int, error)
 }

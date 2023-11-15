@@ -20,8 +20,8 @@ func (m *MemoUseCase) Crate(entity.MemoCrate) (entity.Memo, error) {
 func (m *MemoUseCase) Update(entity.Memo) (entity.Memo, error) {
 	return entity.Memo{}, nil
 }
-func (m *MemoUseCase) Delete(string) (entity.Memo, error) {
-	return entity.Memo{}, nil
+func (m *MemoUseCase) Delete(string) error {
+	return nil
 }
 func (m *MemoUseCase) Search() ([]entity.Memo, int, error) {
 	return []entity.Memo{}, 0, nil
