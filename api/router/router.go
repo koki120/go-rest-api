@@ -4,10 +4,13 @@ import (
 	"net/http"
 
 	"github.com/koki120/go-rest-api/api/middleware"
-	"github.com/koki120/go-rest-api/features/hello"
+	"github.com/koki120/go-rest-api/features/memo"
+	"github.com/koki120/go-rest-api/interface/i_memo"
 )
 
-func NewServer() *http.ServeMux {
+func NewServer(
+	memoUC i_memo.IUseCase,
+) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	h := NewHandleHTTPMethod(mux, []HandlerWrapper{
@@ -15,14 +18,16 @@ func NewServer() *http.ServeMux {
 		middleware.Recovery,
 	})
 
-	helloHandler := hello.NewHandler()
+	memoHandler := memo.NewHandler(memoUC)
 
-	h.Add("/hello/:id", []MethodRoute{
-		{httpMethod: DELETE, handlerFunc: helloHandler.Hello},
+	h.Add("/memo/", []MethodRoute{
+		{httpMethod: GET, handlerFunc: memoHandler.FindByID},
+		{httpMethod: POST, handlerFunc: memoHandler.Create},
+		{httpMethod: DELETE, handlerFunc: memoHandler.Delete},
+		{httpMethod: PATCH, handlerFunc: memoHandler.Update},
 	})
-
-	h.Add("/hello", []MethodRoute{
-		{httpMethod: GET, handlerFunc: helloHandler.Hello},
+	h.Add("/memo", []MethodRoute{
+		{httpMethod: GET, handlerFunc: memoHandler.Search},
 	})
 
 	return mux
