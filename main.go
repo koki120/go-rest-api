@@ -14,7 +14,6 @@ func main() {
 	logger := log.NewLogger()
 
 	db, err := database.NewMySQLDB()
-	logger.Info("", err)
 	if err != nil {
 		logger.Error("Failed to connect to database", err)
 		os.Exit(1)

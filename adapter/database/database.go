@@ -38,3 +38,57 @@ func NewMySQLDB() (*sql.DB, error) {
 
 	return db, nil
 }
+
+const commonColumns = `
+	created_at TIMESTAMP DEFAULT current_timestamp,
+	updated_at TIMESTAMP DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP
+`
+
+func Migrate(db *sql.DB) error {
+	_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS users (
+			id SERIAL PRIMARY KEY,
+			name VARCHAR(255) NOT NULL,
+			hashed_password VARCHAR(255) NOT NULL,
+			user_type ENUM('SystemAdmin', 'User') DEFAULT 'User',
+			` + commonColumns + `
+		);
+	`)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS memos (
+			id SERIAL PRIMARY KEY,
+			title VARCHAR(255) NOT NULL,
+			body TEXT,
+			` + commonColumns + `
+		);
+	`)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func dropAllTables(db *sql.DB) error {
+	rows, err := db.Query("SHOW TABLES")
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var tableName string
+		if err := rows.Scan(&tableName); err != nil {
+			return err
+		}
+
+		query := fmt.Sprintf("DROP TABLE IF EXISTS %s", tableName)
+		if _, err := db.Exec(query); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
