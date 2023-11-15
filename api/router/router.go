@@ -5,23 +5,22 @@ import (
 
 	"github.com/koki120/go-rest-api/api/middleware"
 	"github.com/koki120/go-rest-api/features/hello"
-	"github.com/koki120/go-rest-api/features/memo"
 )
 
 func NewServer() *http.ServeMux {
 	mux := http.NewServeMux()
 
-	h := middleware.NewHandleHTTPMethod(mux, []middleware.HandlerWrapper{
+	h := NewHandleHTTPMethod(mux, []HandlerWrapper{
 		middleware.Authentication,
 		middleware.Recovery,
 	})
 
 	helloHandler := hello.NewHandler()
-	memoHandler := memo.NewHandler()
 
-	h.GET(HELLO, helloHandler.Hello)
-
-	h.GET(MEMO, memoHandler.FindByID)
+	h.Add("/hello", []MethodRoute{
+		{httpMethod: GET, handlerFunc: helloHandler.Hello},
+		{httpMethod: DELETE, handlerFunc: helloHandler.Hello},
+	})
 
 	return mux
 }
