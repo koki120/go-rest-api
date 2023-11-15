@@ -2,8 +2,6 @@ package router
 
 import "net/http"
 
-const methodNotAllowed = "Method not allowed."
-
 // This function invokes middleware and allows a specific HTTP method.
 func handleMethod(h *HandleHTTPMethod, url string, methodRoutes []MethodRoute) {
 	h.mux.HandleFunc(
@@ -14,7 +12,7 @@ func handleMethod(h *HandleHTTPMethod, url string, methodRoutes []MethodRoute) {
 				hw.ServeHTTP(w, r)
 				return
 			}
-			http.Error(w, methodNotAllowed, http.StatusMethodNotAllowed)
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		},
 	)
 }

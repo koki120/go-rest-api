@@ -17,9 +17,12 @@ func NewServer() *http.ServeMux {
 
 	helloHandler := hello.NewHandler()
 
+	h.Add("/hello/:id", []MethodRoute{
+		{httpMethod: DELETE, handlerFunc: helloHandler.Hello},
+	})
+
 	h.Add("/hello", []MethodRoute{
 		{httpMethod: GET, handlerFunc: helloHandler.Hello},
-		{httpMethod: DELETE, handlerFunc: helloHandler.Hello},
 	})
 
 	return mux
