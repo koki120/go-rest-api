@@ -18,28 +18,25 @@ type (
 
 func NewHandleHTTPMethod(mux *http.ServeMux, handlerWrappers []HandlerWrapper) *HandleHTTPMethod {
 	return &HandleHTTPMethod{
-		mux,
-		handlerWrappers,
+		mux:             mux,
+		handlerWrappers: handlerWrappers,
 	}
 }
 
 func (h *HandleHTTPMethod) Add(url string, methodRoutes []MethodRoute) {
-	handleMethod(h, url, methodRoutes)
+	h.mux.HandleFunc(url, h.handleRequest(methodRoutes))
 }
 
-// This function invokes middleware and allows a specific HTTP method.
-func handleMethod(h *HandleHTTPMethod, url string, methodRoutes []MethodRoute) {
-	h.mux.HandleFunc(
-		url,
-		func(w http.ResponseWriter, r *http.Request) {
-			if next := findHandler(methodRoutes, r.Method); next != nil {
-				hw := applyWrappers(next, h.handlerWrappers...)
-				hw.ServeHTTP(w, r)
-				return
-			}
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		},
-	)
+// handleRequest handles the HTTP request by invoking middleware and allowing a specific HTTP method.
+func (h *HandleHTTPMethod) handleRequest(methodRoutes []MethodRoute) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if handlerFunc := findHandler(methodRoutes, r.Method); handlerFunc != nil {
+			hw := applyWrappers(handlerFunc, h.handlerWrappers...)
+			hw.ServeHTTP(w, r)
+			return
+		}
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
 }
 
 func applyWrappers(next http.HandlerFunc, wrappers ...HandlerWrapper) http.Handler {
