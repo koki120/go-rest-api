@@ -62,6 +62,7 @@ func Migrate(db *sql.DB) error {
 			id SERIAL PRIMARY KEY,
 			title VARCHAR(255) NOT NULL,
 			body TEXT,
+			user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
 			` + commonColumns + `
 		);
 	`)
