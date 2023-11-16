@@ -1,21 +1,21 @@
 package router
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/koki120/go-rest-api/api/middleware"
 	"github.com/koki120/go-rest-api/features/health"
 	"github.com/koki120/go-rest-api/features/memo"
+	"github.com/koki120/go-rest-api/interface/i_health"
 	"github.com/koki120/go-rest-api/interface/i_memo"
 )
 
 func NewServer(
-	db *sql.DB,
+	healthUC i_health.UseCase,
 	memoUC i_memo.UseCase,
 ) *http.ServeMux {
 	mux := http.NewServeMux()
-	healthHandler := health.NewHandler(db)
+	healthHandler := health.NewHandler(healthUC)
 	mux.HandleFunc("/health", healthHandler.Health)
 
 	h := NewHandleHTTPMethod(mux, []HandlerWrapper{
