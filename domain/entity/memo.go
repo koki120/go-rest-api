@@ -10,7 +10,8 @@ type Memo struct {
 	UpdatedAt *time.Time
 }
 
-type MemoCrate struct {
-	Title string
-	Body  string
+type MemoCreate struct {
+	MemoID string
+	Title  string
+	Body   string
 }

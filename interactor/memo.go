@@ -17,15 +17,21 @@ func (m *MemoUseCase) FindByID(userID string, memoID string) (entity.Memo, error
 	return m.memoRepository.FindByID(userID, memoID)
 }
 
-func (m *MemoUseCase) Crate(userID string, memo entity.MemoCrate) (entity.Memo, error) {
-	return m.memoRepository.Crate(userID, entity.Memo{})
+func (m *MemoUseCase) Crate(userID string, memo entity.MemoCreate) (entity.Memo, error) {
+	if err := m.memoRepository.Create(userID, entity.Memo{}); err != nil {
+		return entity.Memo{}, nil
+	}
+	return m.FindByID(userID, memo.MemoID)
 }
 
 func (m *MemoUseCase) Update(userID string, memo entity.Memo) (entity.Memo, error) {
 	if _, err := m.FindByID(userID, memo.MemoID); err != nil {
 		return entity.Memo{}, err
 	}
-	return m.memoRepository.Update(memo)
+	if err := m.memoRepository.Update(memo); err != nil {
+		return entity.Memo{}, err
+	}
+	return m.FindByID(userID, memo.MemoID)
 }
 
 func (m *MemoUseCase) Delete(userID string, memoID string) error {
