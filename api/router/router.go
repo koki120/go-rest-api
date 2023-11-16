@@ -12,7 +12,7 @@ import (
 
 func NewServer(
 	db *sql.DB,
-	memoUC i_memo.IUseCase,
+	memoUC i_memo.UseCase,
 ) *http.ServeMux {
 	mux := http.NewServeMux()
 	healthHandler := health.NewHandler(db)

@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/koki120/go-rest-api/domain/entity"
 	"github.com/koki120/go-rest-api/log"
 )
 
@@ -11,6 +12,8 @@ func Authentication(next http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("TODO:authentication")
 
-		next.ServeHTTP(w, r)
+		ctx := r.Context()
+		ctx = SetUserToContext(ctx, entity.User{})
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

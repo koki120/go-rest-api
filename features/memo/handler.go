@@ -3,6 +3,7 @@ package memo
 import (
 	"net/http"
 
+	"github.com/koki120/go-rest-api/api/middleware"
 	"github.com/koki120/go-rest-api/domain/entity"
 	"github.com/koki120/go-rest-api/interface/i_memo"
 	"github.com/koki120/go-rest-api/log"
@@ -10,10 +11,10 @@ import (
 )
 
 type Handler struct {
-	MemoUC i_memo.IUseCase
+	MemoUC i_memo.UseCase
 }
 
-func NewHandler(memoUC i_memo.IUseCase) *Handler {
+func NewHandler(memoUC i_memo.UseCase) *Handler {
 	return &Handler{
 		MemoUC: memoUC,
 	}
@@ -23,7 +24,14 @@ func (h *Handler) FindByID(w http.ResponseWriter, r *http.Request) {
 	logger := log.NewLogger()
 
 	memoID := util.GetLastPathParameter(*r)
-	res, err := h.MemoUC.FindByID(memoID)
+	user, err := middleware.GetUserFromContext(r.Context())
+	if err != nil {
+		logger.Error("Failed to get user in context", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res, err := h.MemoUC.FindByID(user.UserID, memoID)
 	if err != nil {
 		logger.Error("Failed to find memo", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -41,7 +49,14 @@ func (h *Handler) FindByID(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	logger := log.NewLogger()
 
-	res, err := h.MemoUC.Crate(entity.MemoCrate{})
+	user, err := middleware.GetUserFromContext(r.Context())
+	if err != nil {
+		logger.Error("Failed to get user in context", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res, err := h.MemoUC.Crate(user.UserID, entity.MemoCrate{})
 	if err != nil {
 		logger.Error("Failed to crete memo", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -60,7 +75,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	logger := log.NewLogger()
 
-	res, err := h.MemoUC.Update(entity.Memo{})
+	user, err := middleware.GetUserFromContext(r.Context())
+	if err != nil {
+		logger.Error("Failed to get user in context", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res, err := h.MemoUC.Update(user.UserID, entity.Memo{})
 	if err != nil {
 		logger.Error("Failed to update memo", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -80,7 +102,14 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	logger := log.NewLogger()
 
 	memoID := util.GetLastPathParameter(*r)
-	err := h.MemoUC.Delete(memoID)
+	user, err := middleware.GetUserFromContext(r.Context())
+	if err != nil {
+		logger.Error("Failed to get user in context", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = h.MemoUC.Delete(user.UserID, memoID)
 	if err != nil {
 		logger.Error("Failed to delete memo", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
