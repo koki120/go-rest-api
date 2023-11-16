@@ -18,7 +18,7 @@ func (m *MemoUseCase) FindByID(userID string, memoID string) (entity.Memo, error
 }
 
 func (m *MemoUseCase) Crate(userID string, memo entity.MemoCreate) (entity.Memo, error) {
-	if err := m.memoRepository.Create(userID, entity.Memo{}); err != nil {
+	if err := m.memoRepository.Create(userID, entity.MemoCreate{}); err != nil {
 		return entity.Memo{}, nil
 	}
 	return m.FindByID(userID, memo.MemoID)

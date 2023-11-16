@@ -47,7 +47,7 @@ const commonColumns = `
 func Migrate(db *sql.DB) error {
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
-			id SERIAL PRIMARY KEY,
+			id VARCHAR(255) PRIMARY KEY,
 			name VARCHAR(255) NOT NULL,
 			hashed_password VARCHAR(255) NOT NULL,
 			user_type ENUM('SystemAdmin', 'User') DEFAULT 'User',
@@ -59,7 +59,7 @@ func Migrate(db *sql.DB) error {
 	}
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS memos (
-			id SERIAL PRIMARY KEY,
+			id VARCHAR(255) PRIMARY KEY,
 			title VARCHAR(255) NOT NULL,
 			body TEXT,
 			user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,

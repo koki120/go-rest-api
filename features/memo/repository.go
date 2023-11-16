@@ -19,7 +19,7 @@ func NewMemoRepository(db *sql.DB) i_memo.Repository {
 
 func (r *MemoRepository) FindByID(userID string, memoID string) (entity.Memo, error) {
 	query := `
-		SELECT memo_id, title, body, created_at, updated_at
+		SELECT id, title, body, created_at, updated_at
 		FROM memos
 		WHERE user_id = ? AND id = ?
 	`
@@ -28,12 +28,12 @@ func (r *MemoRepository) FindByID(userID string, memoID string) (entity.Memo, er
 	return ParseMemoEntity(row)
 }
 
-func (r *MemoRepository) Create(userID string, memo entity.Memo) error {
+func (r *MemoRepository) Create(userID string, memo entity.MemoCreate) error {
 	query := `
-		INSERT INTO memos (user_id, title, body)
-		VALUES (?, ?, ?)
+		INSERT INTO memos (id, user_id, title, body)
+		VALUES (?, ?, ?, ?)
 	`
-	_, err := r.db.Exec(query, userID, memo.Title, memo.Body)
+	_, err := r.db.Exec(query, memo.MemoID, userID, memo.Title, memo.Body)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (r *MemoRepository) Update(memo entity.Memo) error {
 	query := `
 		UPDATE memos
 		SET title = ?, body = ?
-		WHERE AND memo_id = ?
+		WHERE AND id = ?
 	`
 	_, err := r.db.Exec(query, memo.Title, memo.Body, memo.MemoID)
 	if err != nil {
@@ -56,7 +56,7 @@ func (r *MemoRepository) Update(memo entity.Memo) error {
 func (r *MemoRepository) Delete(memoID string) error {
 	query := `
 		DELETE FROM memos
-		WHERE memo_id = ?
+		WHERE id = ?
 	`
 	_, err := r.db.Exec(query, memoID)
 	return err
