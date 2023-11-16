@@ -56,7 +56,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := h.MemoUC.Crate(user.UserID, entity.MemoCreate{})
+	res, err := h.MemoUC.Create(user.UserID, entity.MemoCreate{})
 	if err != nil {
 		logger.Error("Failed to crete memo", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

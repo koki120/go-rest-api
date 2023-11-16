@@ -16,6 +16,8 @@ type User struct {
 }
 
 type UserCrate struct {
+	UserID   string
 	Name     string
 	Password string
+	UserType entconst.UserType
 }
