@@ -3,9 +3,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ${LOCAL_WORKSPACE_FOLDER}/go-rest-api:/app
+      dockerfile: ./dev_dockerfiles/dockerfile.api
     ports:
       - 80:80
     tty: true
@@ -17,8 +15,9 @@ services:
         condition: service_healthy
 
   mysql:
-    image: mysql:8.0.28
-    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: ./dev_dockerfiles/dockerfile.mysql
     ports:
       - ${DB_PORT}:3306
     environment:
@@ -27,9 +26,6 @@ services:
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - TZ=${TZ}
-    volumes:
-      - ${LOCAL_WORKSPACE_FOLDER}/go-rest-api/mysql-data:/var/lib/mysql
-      - ${LOCAL_WORKSPACE_FOLDER}/go-rest-api/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
 
