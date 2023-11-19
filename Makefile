@@ -1,17 +1,17 @@
 # App Server
 .PHONY: run
 run:
-	docker compose -f docker-compose.yml up --build
+	docker compose -f docker-compose.devcontainer.yml up --build
 
 .PHONY: destroy
 destroy:
-	docker compose -f docker-compose.yml down --volumes --remove-orphans
+	docker compose -f docker-compose.devcontainer.yml down --volumes --remove-orphans
 	rm -rf mysql/mysql-data
 
 # MySQL
 .PHONY: init-db
 init-db:
-	docker compose -f docker-compose.yml run --rm api go run cmd/initdb/initdb.go
+	docker compose -f docker-compose.devcontainer.yml run --rm api go run cmd/initdb/initdb.go
 
 # Tools
 .PHONY: tools
